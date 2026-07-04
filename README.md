@@ -101,7 +101,7 @@ Your `.env` should look like:
 ```env
 IBM_API_KEY=your_actual_ibm_cloud_api_key
 WATSONX_PROJECT_ID=your_watsonx_project_id
-WATSONX_URL=https://us-south.ml.cloud.ibm.com
+WATSONX_URL=your_watsonx_project_url
 FLASK_SECRET_KEY=any-random-secure-string
 ```
 
