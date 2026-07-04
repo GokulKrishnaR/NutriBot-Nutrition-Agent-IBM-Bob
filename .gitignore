@@ -1,0 +1,22 @@
+# Environments
+.env
+.env.local
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.venv/
+var/
+.ipython/
+.pytest_cache/
+
+# Flask / logs
+*.log
