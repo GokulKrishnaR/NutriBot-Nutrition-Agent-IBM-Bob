@@ -188,15 +188,19 @@ Respond as {ai['name']} directly. Do not include "AI:" or "Assistant:" prefixes.
 
 def build_prompt(user_message: str, chat_history: list, user_profile: dict | None) -> str:
     system = build_system_prompt(user_profile)
+    user_name = "User"
+    if user_profile and isinstance(user_profile, dict):
+        user_name = user_profile.get("name", "User").strip() or "User"
+
     history_text = ""
     for msg in chat_history[-6:]:   # last 3 exchanges for context
-        role    = "User"    if msg["role"] == "user"      else AGENT_INSTRUCTIONS["name"]
+        role    = user_name    if msg["role"] == "user"      else AGENT_INSTRUCTIONS["name"]
         history_text += f"{role}: {msg['content']}\n"
 
     return (
         f"{system}\n\n"
         f"Conversation so far:\n{history_text}"
-        f"User: {user_message}\n"
+        f"{user_name}: {user_message}\n"
         f"{AGENT_INSTRUCTIONS['name']}:"
     )
 
@@ -320,6 +324,16 @@ def chat():
         prompt   = build_prompt(user_message, chat_history, user_profile)
         result   = model.generate_text(prompt=prompt)
         response = result.strip() if isinstance(result, str) else str(result)
+        
+        # Clean response from trailing role labels (e.g. "User:", "Gokul:", "NutriBot:")
+        user_name = "User"
+        if user_profile and isinstance(user_profile, dict):
+            user_name = user_profile.get("name", "User").strip() or "User"
+            
+        clean_patterns = ["User", "Human", "AI", "Assistant", re.escape(AGENT_INSTRUCTIONS["name"]), re.escape(user_name)]
+        clean_patterns = list(set([p for p in clean_patterns if p]))
+        pattern_str = r'\s*(?:' + '|'.join(clean_patterns) + r')\s*:\s*$'
+        response = re.sub(pattern_str, '', response, flags=re.IGNORECASE).strip()
     except Exception as exc:
         app.logger.error(f"Watsonx generation error: {exc}")
         return jsonify({"error": f"Model error: {str(exc)}"}), 500
