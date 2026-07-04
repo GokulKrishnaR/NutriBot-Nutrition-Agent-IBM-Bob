@@ -66,7 +66,7 @@ nutrition-agent/
 ### 1. Clone & setup environment
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/GokulKrishnaR/nutrition-agent-IBM-Bob.git
 cd nutrition-agent
 
 # Create virtual environment
